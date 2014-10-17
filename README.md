@@ -11,7 +11,7 @@ TLS and OpenDKIM support are optional.
 1. Build image
 
 	```bash
-	$ sudo docker pull catatnight/postfix
+	$ sudo docker build sarasa/postfix .
 	```
 
 ## Usage
@@ -19,9 +19,12 @@ TLS and OpenDKIM support are optional.
 
 	```bash
 	$ sudo docker run -p 25:25 \
-			-e maildomain=mail.example.com -e smtp_user=user:pwd \
-			--name postfix -d catatnight/postfix
-	# Set multiple user credentials: -e smtp_user=user1:pwd1,user2:pwd2,...,userN:pwdN
+			-e hostname=mail.example.com -e smtp_user=user:pwd \
+			--name postfix -d sarasa/postfix
+	# Set aliases on host machine and mount them with ```-v /dir/postfix/users/aliases.db:/etc/aliases.db```
+	# You can also set sasl authentication users on host machine ```saslpasswd2 -c -u $domain $user -f /dir/postfix/sasl/sasldb2``` 
+	# with ```-v /dir/postfix/sasl/sasldb2:/etc/sasldb2``` check with ```sasldblistusers2 -f /dir/postfix/sasl/sasldb2```
+	# Another alternative is to set multiple user credentials: -e smtp_user=user1:pwd1,user2:pwd2,...,userN:pwdN
 	```
 2. Enable OpenDKIM: save your domain key ```.private``` in ```/path/to/domainkeys```
 
