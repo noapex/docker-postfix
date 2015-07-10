@@ -71,6 +71,21 @@ if [[ -n "$(find /etc/postfix/certs -iname *.crt)" && -n "$(find /etc/postfix/ce
 fi
 
 #############
+#  ext. relay
+#############
+if [[ -s /etc/postfix/sasl_passwd.db && -s /etc/postfix/relayhost_map.db ]]; then
+  postconf -e "smtp_sender_dependent_authentication=yes"
+  postconf -e "sender_dependent_relayhost_maps=hash:/etc/postfix/relayhost_map"
+  postconf -e "smtp_sasl_auth_enable=yes"
+  postconf -e "smtp_sasl_security_options=noanonymous"
+  postconf -e "smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd"
+  postconf -e "smtp_use_tls=yes"
+  postconf -e "smtp_tls_security_level=encrypt"
+  postconf -e "smtp_tls_note_starttls_offer=yes"
+fi
+
+
+#############
 #  opendkim
 #############
 
@@ -87,6 +102,12 @@ postconf -e milter_protocol=2
 postconf -e milter_default_action=accept
 postconf -e smtpd_milters=inet:localhost:12301
 postconf -e non_smtpd_milters=inet:localhost:12301
+postconf -e smtpd_tls_protocols='!SSLv2,!SSLv3'
+postconf -e smtp_tls_protocols='!SSLv2,!SSLv3'
+postconf -e lmtp_tls_protocols='!SSLv2,!SSLv3'
+postconf -e smtpd_tls_mandatory_protocols='!SSLv2,!SSLv3'
+postconf -e smtp_tls_mandatory_protocols='!SSLv2,!SSLv3'
+postconf -e lmtp_tls_mandatory_protocols='!SSLv2,!SSLv3'
 
 cat >> /etc/opendkim.conf <<EOF
 AutoRestart             Yes

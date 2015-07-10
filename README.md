@@ -19,8 +19,8 @@ TLS and OpenDKIM support are optional.
 
 	```bash
 	$ sudo docker run -p 25:25 \
-			-e hostname=mail.example.com -e smtp_user=user:pwd \
-			--name postfix -d sarasa/postfix
+			-e hostname=mail.example.com -e relayhost=email-smtp.us-east-1.amazonaws.com -e smtp_user=user:pwd \
+			-v /dir/postfix/relay/sasl_passwd.db:/etc/postfix/sasl_passwd.db --name postfix -d sarasa/postfix
 	# Set aliases on host machine and mount them with ```-v /dir/postfix/users/aliases.db:/etc/aliases.db```
 	# You can also set sasl authentication users on host machine ```saslpasswd2 -c -u $domain $user -f /dir/postfix/sasl/sasldb2``` 
 	# with ```-v /dir/postfix/sasl/sasldb2:/etc/sasldb2``` check with ```sasldblistusers2 -f /dir/postfix/sasl/sasldb2```
